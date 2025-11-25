@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Адвент: забота о себе</title>
+<style>
+  :root{
+    --bg:#f7f4f2;
+    --card:#fff;
+    --accent:#6b4f9f;
+    --muted:#7a7a7a;
+    --ok:#2a9d8f;
+    --shadow: 0 6px 18px rgba(12,12,12,0.08);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#eef0f2 100%);color:#222}
+  .wrap{max-width:980px;margin:28px auto;padding:18px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{font-size:20px;margin:0;color:var(--accent)}
+  p.lead{margin:6px 0 18px;color:var(--muted);font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}
+  .card{
+    perspective:800px;
+    height:140px;
+  }
+  .inner{
+    position:relative;width:100%;height:100%;border-radius:10px;background:var(--card);
+    box-shadow:var(--shadow);cursor:pointer;transform-style:preserve-3d;transition:transform .6s;
+  }
+  .card.open .inner{transform:rotateY(180deg)}
+  .face{
+    position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:12px;
+  }
+  .front{
+    background:linear-gradient(180deg,#fff,var(--card));font-weight:700;color:var(--accent);font-size:22px;
+  }
+  .front .num{font-size:32px}
+  .back{
+    transform:rotateY(180deg);text-align:left;padding:12px 14px;font-size:14px;color:#222;
+    display:flex;flex-direction:column;gap:8px;justify-content:space-between;
+  }
+  .task{line-height:1.3}
+  .controls{display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .btn{
+    padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer;
+    box-shadow:0 4px 10px rgba(107,79,159,0.15);
+  }
+  .btn.secondary{background:#eee;color:#333;font-weight:600}
+  .small{font-size:13px;color:var(--muted)}
+  .done{display:inline-flex;align-items:center;gap:8px;font-size:13px}
+  .done input{width:18px;height:18px}
+  footer{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .progress{font-size:13px;color:var(--muted)}
+  .reset{background:transparent;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;font-size:13px}
+  @media (max-width:520px){
+    .card{height:120px}
+    .front .num{font-size:26px}
+  }
+  @media print{
+    body{background:white}
+    .btn,.reset{display:none}
+    .inner{box-shadow:none}
+    .grid{gap:6px}
+    .card{page-break-inside:avoid;break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <header>
+      <div>
+        <h1>Адвент — забота о себе (короткие задания)</h1>
+        <p class="lead">Кликни на окошко дня, чтобы открыть задание. Каждое занимает 1–5 минут. Прогресс сохраняется в этом браузере.</p>
+      </div>
+      <div style="text-align:right">
+        <div class="small">Подходит для быстрых пауз и мягкой рефлексии</div>
+        <div style="height:6px"></div>
+        <button class="btn" id="revealToday">Открыть сегодня</button>
+      </div>
+    </header>
+
+    <section class="grid" id="grid" aria-live="polite"></section>
+
+    <footer>
+      <div class="progress" id="progress">Открыто 0 из 24</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn secondary" id="printBtn">Печать</button>
+        <button class="reset" id="resetBtn">Сбросить прогресс</button>
+      </div>
+    </footer>
+  </div>
+
+<script>
+(function(){
+  const tasks=[/* truncated for brevity in this view; full tasks remain unchanged */];
+
+  // full array:
+  const fullTasks=[
+    "Запиши одну вещь, которая в тебе укрепилась за год.",
+    "Выбери маленький жест заботы о теле: выпей воду, сделай 3 глубоких вдоха или потянись.",
+    "Вспомни момент, когда ты гордилась собой — опиши его тремя словами.",
+    "Паузa у окна на 2 минуты: смотри и дыши, без телефона.",
+    "Подумай, кто была опорой в этом году, и мысленно поблагодари.",
+    "Запиши одну привычку, которую хочешь мягко укрепить в следующем году.",
+    "Сделай маленькую сенсорную радость: тёплый напиток, любимый запах или плед.",
+    "Выбери фото за год, которое хочется сохранить как символ тёплого момента.",
+    "Положи руку на грудь и сделай 5 медленных вдохов.",
+    "Спроси себя: «Что мне нужно прямо сейчас?» — и сделай минимальный шаг.",
+    "Запиши три маленькие удачи этого года.",
+    "Останься в прямой осанке 1 минуту — почувствуй дыхание.",
+    "Тишина на 1 минуту — без задач и телефона.",
+    "Выпиши три вещи, которые хочешь оставить в уходящем году.",
+    "Вспомни, кому ты принесла добро — даже мелкое.",
+    "Выбери одно упрощение на сегодня: что можно сделать проще.",
+    "Запиши одну мечту без обязательств — просто как возможность.",
+    "Микро-расхламление: убери или отдай одну вещь.",
+    "Составь мини-плейлист из трёх треков, дающих опору.",
+    "Вспомни момент покоя в этом году — опиши телесное ощущение.",
+    "Проверь базовые потребности: голод, вода, воздух — удовлетворить одну.",
+    "Запиши маленькое «да», которое ты себе сказала в этом году.",
+    "Сделай 30 секунд растяжки: шея, плечи или спина.",
+    "Назови одну вещь, которую сделаешь для себя в новом году в первую очередь."
+  ];
+
+  const grid=document.getElementById('grid');
+  const progressEl=document.getElementById('progress');
+  const resetBtn=document.getElementById('resetBtn');
+  const printBtn=document.getElementById('printBtn');
+  const revealTodayBtn=document.getElementById('revealToday');
+
+  const STORAGE_KEY='advent-selfcare-state-v1';
+  let state={opened:{},done:{}};
+  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)state=JSON.parse(raw);}catch(e){}
+
+  function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));updateProgress();}
+
+  function createCard(i,text){
+    const card=document.createElement('div');card.className='card';card.dataset.day=i+1;
+    const inner=document.createElement('div');inner.className='inner';
+
+    const front=document.createElement('div');front.className='face front';
+    front.innerHTML='<div><div class="num">'+(i+1)+'</div></div>';
+
+    const back=document.createElement('div');back.className='face back';
+    const task=document.createElement('div');task.className='task';task.textContent=text;
+
+    const controls=document.createElement('div');controls.className='controls';
+    const doneLabel=document.createElement('label');doneLabel.className='done';
+    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=!!state.done[i];
+    checkbox.addEventListener('change',e=>{state.done[i]=e.target.checked;save();});
+    doneLabel.appendChild(checkbox);doneLabel.append("Выполнено");
+
+    const meta=document.createElement('div');meta.innerHTML='<div class="small">День '+(i+1)+'</div>';
+    controls.append(doneLabel,meta);
+
+    back.append(task,controls);
+    inner.append(front,back);
+    card.append(inner);
+
+    if(state.opened[i])card.classList.add('open');
+
+    card.addEventListener('click',ev=>{
+      if(ev.target.tagName.toLowerCase()==='input')return;
+      state.opened[i]=true;save();card.classList.toggle('open');
+    });
+    return card;
+  }
+
+  function render(){
+    grid.innerHTML='';fullTasks.forEach((t,i)=>grid.append(createCard(i,t)));
+    updateProgress();
+  }
+  function updateProgress(){
+    const o=Object.values(state.opened).filter(Boolean).length;
+    const d=Object.values(state.done).filter(Boolean).length;
+    progressEl.textContent=`Открыто ${o} из 24. Выполнено: ${d}.`;
+  }
+
+  resetBtn.onclick=()=>{if(confirm('Сбросить прогресс?')){state={opened:{},done:{}};save();render();}};
+  printBtn.onclick=()=>window.print();
+  revealTodayBtn.onclick=()=>{
+    let day=Math.min(24,Math.max(1,new Date().getDate()));
+    state.opened[day-1]=true;save();
+    const card=grid.querySelector('[data-day="'+day+'"]');
+    card?.classList.add('open');card?.scrollIntoView({behavior:'smooth',block:'center'});
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>

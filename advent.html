@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Адвент 2025: забота о себе</title>
+<title>Адвент: забота о себе</title>
 <style>
   :root{
     --bg:#f7f4f2;
@@ -53,10 +53,13 @@
   footer{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
   .progress{font-size:13px;color:var(--muted)}
   .reset{background:transparent;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;font-size:13px}
+  .separator{margin:22px 0;border-top:1px dashed rgba(0,0,0,0.06);padding-top:12px}
+  .section-title{font-size:15px;color:var(--muted);margin:6px 0 12px}
   @media (max-width:520px){
     .card{height:120px}
     .front .num{font-size:26px}
   }
+  /* print-friendly */
   @media print{
     body{background:white}
     .btn,.reset{display:none}
@@ -70,7 +73,7 @@
   <div class="wrap" role="main">
     <header>
       <div>
-        <h1>Адвент 2025: забота о себе</h1>
+        <h1>Адвент — забота о себе (короткие задания)</h1>
         <p class="lead">Кликни на окошко дня, чтобы открыть задание. Каждое занимает 1–5 минут. Прогресс сохраняется в этом браузере.</p>
       </div>
       <div style="text-align:right">
@@ -80,10 +83,18 @@
       </div>
     </header>
 
-    <section class="grid" id="grid" aria-live="polite"></section>
+    <!-- Основные 1–24 -->
+    <section>
+      <div class="grid" id="grid" aria-live="polite"></div>
+    </section>
+
+    <div class="separator" role="separator" aria-hidden="false">
+      <div class="section-title">Бонусные дни — 25–31</div>
+      <div class="grid" id="bonusGrid" aria-live="polite"></div>
+    </div>
 
     <footer>
-      <div class="progress" id="progress">Открыто 0 из 24</div>
+      <div class="progress" id="progress">Открыто 0 из 31</div>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="btn secondary" id="printBtn">Печать</button>
         <button class="reset" id="resetBtn">Сбросить прогресс</button>
@@ -93,98 +104,194 @@
 
 <script>
 (function(){
-  const tasks=[/* truncated for brevity in this view; full tasks remain unchanged */];
-
-  // full array:
-  const fullTasks=[
+  const mainTasks = [
     "Запиши одну вещь, которая в тебе укрепилась за год.",
-    "Выбери маленький жест заботы о теле: выпей воду, сделай 3 глубоких вдоха или потянись.",
-    "Вспомни момент, когда ты гордилась собой — опиши его тремя словами.",
-    "Паузa у окна на 2 минуты: смотри и дыши, без телефона.",
-    "Подумай, кто была опорой в этом году, и мысленно поблагодари.",
-    "Запиши одну привычку, которую хочешь мягко укрепить в следующем году.",
-    "Сделай маленькую сенсорную радость: тёплый напиток, любимый запах или плед.",
-    "Выбери фото за год, которое хочется сохранить как символ тёплого момента.",
-    "Положи руку на грудь и сделай 5 медленных вдохов.",
-    "Спроси себя: «Что мне нужно прямо сейчас?» — и сделай минимальный шаг.",
-    "Запиши три маленькие удачи этого года.",
-    "Останься в прямой осанке 1 минуту — почувствуй дыхание.",
-    "Тишина на 1 минуту — без задач и телефона.",
-    "Выпиши три вещи, которые хочешь оставить в уходящем году.",
-    "Вспомни, кому ты принесла добро — даже мелкое.",
-    "Выбери одно упрощение на сегодня: что можно сделать проще.",
-    "Запиши одну мечту без обязательств — просто как возможность.",
-    "Микро-расхламление: убери или отдай одну вещь.",
-    "Составь мини-плейлист из трёх треков, дающих опору.",
-    "Вспомни момент покоя в этом году — опиши телесное ощущение.",
-    "Проверь базовые потребности: голод, вода, воздух — удовлетворить одну.",
-    "Запиши маленькое «да», которое ты себе сказала в этом году.",
-    "Сделай 30 секунд растяжки: шея, плечи или спина.",
-    "Назови одну вещь, которую сделаешь для себя в новом году в первую очередь."
+    "Выбери маленький жест заботы о теле: выпей воды, сделай 3 глубоких вдоха, потянись.",
+    "Вспомни момент, когда ты собой гордилась, и опиши его тремя словами.",
+    "Устроить «паузу на окно» на 2 минуты — просто смотреть и дышать.",
+    "Подумать, кто была опорой в этом году, и мысленно поблагодарить.",
+    "Записать одну привычку, которую хочешь мягко укрепить в следующем году.",
+    "Сделать маленькую сенсорную радость: тёплый напиток, любимый запах, плед.",
+    "Выбрать фото за год, которое хочется сохранить как символ тёплого момента.",
+    "Положить руку на грудь и сделать 5 глубоких медленных вдохов.",
+    "Спросить себя: «Что мне нужно прямо сейчас?» — и выполнить минимальный шаг.",
+    "Записать три маленьких удачи этого года.",
+    "Остаться в прямой осанке 1 минуту — почувствовать дыхание.",
+    "Устроить «тишину на 1 минуту» — без телефона и задач.",
+    "Выписать три вещи, которые хочешь оставить в уходящем году.",
+    "Вспомнить человека, которому принесла добро, даже мелкое.",
+    "Выбрать одно упрощение для сегодняшнего дня.",
+    "Записать одну мечту без обязательств — просто как возможность.",
+    "Микро-расхламление: убрать или отдать одну вещь.",
+    "Составить мини-плейлист из трёх треков, которые дают опору.",
+    "Вспомнить момент покоя за год — описать телесное ощущение.",
+    "Проверить базовые потребности: голод, вода, воздух — удовлетворить одну.",
+    "Записать маленькое «да», которое ты в этом году сказала себе.",
+    "Сделать 30 секунд растяжки: шея, плечи или спина.",
+    "Назвать одну вещь, которую ты сделаешь для себя в новом году в первую очередь."
   ];
 
-  const grid=document.getElementById('grid');
-  const progressEl=document.getElementById('progress');
-  const resetBtn=document.getElementById('resetBtn');
-  const printBtn=document.getElementById('printBtn');
-  const revealTodayBtn=document.getElementById('revealToday');
+  const bonusTasks = [
+    "Мягкое завершение дня — выбери один жест ласки себе.",
+    "Запиши три события года, которые сделали тебя сильнее.",
+    "Две минуты тишины — просто побыть внутри.",
+    "Подарок себе: придумай маленький символический жест.",
+    "Что хочешь отпустить перед новым годом? Напиши одно слово.",
+    "Что хочешь пригласить в новую версию себя? Напиши одно качество.",
+    "Напиши тёплое письмо себе на следующий год (коротко)."
+  ];
 
-  const STORAGE_KEY='advent-selfcare-state-v1';
-  let state={opened:{},done:{}};
-  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)state=JSON.parse(raw);}catch(e){}
+  const grid = document.getElementById('grid');
+  const bonusGrid = document.getElementById('bonusGrid');
+  const progressEl = document.getElementById('progress');
+  const resetBtn = document.getElementById('resetBtn');
+  const printBtn = document.getElementById('printBtn');
+  const revealTodayBtn = document.getElementById('revealToday');
 
-  function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));updateProgress();}
+  // State saved as arrays keyed by index 0..30
+  const STORAGE_KEY = 'advent-selfcare-state-v2';
+  let state = { opened: {}, done: {} };
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) state = JSON.parse(raw);
+  }catch(e){ console.warn(e) }
 
-  function createCard(i,text){
-    const card=document.createElement('div');card.className='card';card.dataset.day=i+1;
-    const inner=document.createElement('div');inner.className='inner';
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateProgress(); }
 
-    const front=document.createElement('div');front.className='face front';
-    front.innerHTML='<div><div class="num">'+(i+1)+'</div></div>';
+  function createCard(globalIndex, label, text){
+    // globalIndex: 0..30 (day-1)
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-day', globalIndex + 1);
+    card.setAttribute('role','group');
+    card.setAttribute('aria-label','День ' + (globalIndex + 1));
 
-    const back=document.createElement('div');back.className='face back';
-    const task=document.createElement('div');task.className='task';task.textContent=text;
+    const inner = document.createElement('div');
+    inner.className = 'inner';
 
-    const controls=document.createElement('div');controls.className='controls';
-    const doneLabel=document.createElement('label');doneLabel.className='done';
-    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=!!state.done[i];
-    checkbox.addEventListener('change',e=>{state.done[i]=e.target.checked;save();});
-    doneLabel.appendChild(checkbox);doneLabel.append("Выполнено");
+    const front = document.createElement('div');
+    front.className = 'face front';
+    front.innerHTML = '<div><div class="num">' + label + '</div></div>';
 
-    const meta=document.createElement('div');meta.innerHTML='<div class="small">День '+(i+1)+'</div>';
-    controls.append(doneLabel,meta);
+    const back = document.createElement('div');
+    back.className = 'face back';
+    const task = document.createElement('div'); task.className = 'task'; task.textContent = text;
 
-    back.append(task,controls);
-    inner.append(front,back);
-    card.append(inner);
-
-    if(state.opened[i])card.classList.add('open');
-
-    card.addEventListener('click',ev=>{
-      if(ev.target.tagName.toLowerCase()==='input')return;
-      state.opened[i]=true;save();card.classList.toggle('open');
+    const controls = document.createElement('div'); controls.className = 'controls';
+    const doneLabel = document.createElement('label'); doneLabel.className = 'done';
+    const checkbox = document.createElement('input'); checkbox.type='checkbox';
+    checkbox.checked = !!state.done[globalIndex];
+    checkbox.addEventListener('change', (e)=>{
+      state.done[globalIndex] = e.target.checked;
+      save();
+      updateCardMark(card, globalIndex);
     });
+    doneLabel.appendChild(checkbox);
+    doneLabel.appendChild(document.createTextNode('Выполнено'));
+    const meta = document.createElement('div'); meta.style.textAlign='right';
+    meta.innerHTML = '<div class="small">День ' + label + '</div>';
+    controls.appendChild(doneLabel); controls.appendChild(meta);
+    back.appendChild(task); back.appendChild(controls);
+
+    inner.appendChild(front); inner.appendChild(back);
+    card.appendChild(inner);
+
+    // initial open state
+    if(state.opened[globalIndex]){
+      card.classList.add('open');
+      inner.style.transform = 'rotateY(180deg)';
+    }
+
+    // click to open
+    card.addEventListener('click', (ev)=>{
+      if(ev.target.tagName.toLowerCase() === 'input') return;
+      if(!state.opened[globalIndex]){
+        state.opened[globalIndex] = true;
+        save();
+      }
+      card.classList.toggle('open');
+      if(card.classList.contains('open')){
+        inner.style.transform = 'rotateY(180deg)';
+      } else {
+        inner.style.transform = '';
+      }
+    });
+
+    updateCardMark(card, globalIndex);
     return card;
   }
 
-  function render(){
-    grid.innerHTML='';fullTasks.forEach((t,i)=>grid.append(createCard(i,t)));
-    updateProgress();
-  }
-  function updateProgress(){
-    const o=Object.values(state.opened).filter(Boolean).length;
-    const d=Object.values(state.done).filter(Boolean).length;
-    progressEl.textContent=`Открыто ${o} из 24. Выполнено: ${d}.`;
+  function updateCardMark(card, idx){
+    if(state.done[idx]){
+      card.style.border = '2px solid rgba(42,157,143,0.18)';
+      const f = card.querySelector('.front');
+      if(f) f.style.opacity = '0.7';
+    } else {
+      card.style.border = '';
+      const f = card.querySelector('.front');
+      if(f) f.style.opacity = '1';
+    }
   }
 
-  resetBtn.onclick=()=>{if(confirm('Сбросить прогресс?')){state={opened:{},done:{}};save();render();}};
-  printBtn.onclick=()=>window.print();
-  revealTodayBtn.onclick=()=>{
-    let day=Math.min(24,Math.max(1,new Date().getDate()));
-    state.opened[day-1]=true;save();
-    const card=grid.querySelector('[data-day="'+day+'"]');
-    card?.classList.add('open');card?.scrollIntoView({behavior:'smooth',block:'center'});
-  };
+  function render(){
+    grid.innerHTML = '';
+    bonusGrid.innerHTML = '';
+
+    // render main tasks 1..24 (global indices 0..23)
+    for(let i=0;i<mainTasks.length;i++){
+      grid.appendChild(createCard(i, i+1, mainTasks[i]));
+    }
+
+    // render bonus 25..31 (global indices 24..30)
+    for(let j=0;j<bonusTasks.length;j++){
+      const globalIndex = mainTasks.length + j; // 24..30
+      const label = 25 + j;
+      bonusGrid.appendChild(createCard(globalIndex, label, bonusTasks[j]));
+    }
+
+    updateProgress();
+    // set focusability for keyboard
+    document.querySelectorAll('.card').forEach((c)=>c.setAttribute('tabindex','0'));
+  }
+
+  function updateProgress(){
+    const total = mainTasks.length + bonusTasks.length; // 31
+    const openedCount = Object.keys(state.opened).filter(k=>state.opened[k]).length;
+    const doneCount = Object.keys(state.done).filter(k=>state.done[k]).length;
+    progressEl.textContent = `Открыто ${openedCount} из ${total}. Выполнено: ${doneCount}.`;
+  }
+
+  resetBtn.addEventListener('click', ()=>{
+    if(!confirm('Сбросить сохранённый прогресс? (открытые окна и отметки будут удалены)')) return;
+    state = { opened: {}, done: {} };
+    save();
+    render();
+  });
+
+  printBtn.addEventListener('click', ()=> window.print());
+
+  revealTodayBtn.addEventListener('click', ()=>{
+    // вычислим «сегодня» как число между 1 и 31
+    const now = new Date();
+    let dayOfMonth = now.getDate(); // 1..31
+    let day = Math.min(31, Math.max(1, dayOfMonth));
+    const idx = day - 1;
+    state.opened[idx] = true;
+    save();
+    const card = document.querySelector('.card[data-day="'+day+'"]');
+    if(card){
+      card.classList.add('open');
+      card.querySelector('.inner').style.transform = 'rotateY(180deg)';
+      card.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  });
+
+  // accessibility: open with Enter when focused
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' && document.activeElement && document.activeElement.classList.contains('card')){
+      document.activeElement.click();
+    }
+  });
 
   render();
 })();

@@ -5,125 +5,238 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Адвент: забота о себе</title>
 <style>
-  :root{
-    --bg:#f7f4f2;
-    --card:#fff;
-    --accent:#6b4f9f;
-    --muted:#7a7a7a;
-    --ok:#2a9d8f;
-    --shadow: 0 6px 18px rgba(12,12,12,0.08);
+  :root {
+    --bg: #f7f4f2;
+    --card: #fff;
+    --accent: #6b4f9f;
+    --muted: #7a7a7a;
+    --ok: #2a9d8f;
+    --shadow: 0 6px 18px rgba(12, 12, 12, 0.08);
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#eef0f2 100%);color:#222}
-  .wrap{max-width:980px;margin:28px auto;padding:18px;}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  h1{font-size:20px;margin:0;color:var(--accent)}
-  p.lead{margin:6px 0 18px;color:var(--muted);font-size:14px}
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-    gap:16px;
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(180deg, var(--bg), #eef0f2 100%);
+    color: #222;
+  }
+  .wrap {
+    max-width: 980px;
+    margin: 28px auto;
+    padding: 18px;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  h1 {
+    font-size: 20px;
+    margin: 0;
+    color: var(--accent);
+  }
+  p.lead {
+    margin: 6px 0 18px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
   }
 
   /* 🌿 АДАПТИВНЫЕ КАРТОЧКИ */
-  .card{
-    perspective:800px;
-    min-height:180px;
-    height:auto;
+  .card {
+    perspective: 800px; /* На мобилках уменьшим */
+    height: auto;
   }
-  .inner{
-    position:relative;
-    width:100%;
-    min-height:180px;
-    height:auto;
-    border-radius:10px;
-    background:var(--card);
-    box-shadow:var(--shadow);
-    cursor:pointer;
-    transform-style:preserve-3d;
-    transition:transform .6s;
+  .inner {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform .6s;
   }
-  .card.open .inner{transform:rotateY(180deg)}
-
-  .face{
-    position:absolute;
-    inset:0;
-    backface-visibility:hidden;
-    border-radius:10px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:14px;
+  .card.open .inner {
+    transform: rotateY(180deg);
   }
 
-  .front{
-    background:linear-gradient(180deg,#fff,var(--card));
-    font-weight:700;
-    color:var(--accent);
-    font-size:24px;
-  }
-  .front .num{font-size:34px}
-
-  /* задняя сторона теперь адаптируется по высоте */
-  .back{
-    transform:rotateY(180deg);
-    text-align:left;
-    padding:18px;
-    font-size:15px;
-    color:#222;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    gap:12px;
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
   }
 
-  .task{line-height:1.35}
-
-  .controls{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-    flex-wrap:wrap;
+  .front {
+    background: linear-gradient(180deg, #fff, var(--card));
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 24px;
+  }
+  .front .num {
+    font-size: 34px;
+    line-height: 1; /* Чтобы номер не раздувал карточку */
   }
 
-  .done{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:14px;
-  }
-  .done input{
-    width:20px;
-    height:20px;
+  /* Задняя сторона */
+  .back {
+    transform: rotateY(180deg);
+    text-align: left;
+    padding: 18px;
+    font-size: 15px;
+    color: #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
   }
 
-  .small{font-size:13px;color:var(--muted)}
-  footer{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-
-  .progress{font-size:13px;color:var(--muted)}
-  .btn{
-    padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer;
-    box-shadow:0 4px 10px rgba(107,79,159,0.15);
+  .task {
+    line-height: 1.35;
+    word-wrap: break-word; /* Перенос длинных слов */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Максимум 4 строки */
+    -webkit-box-orient: vertical;
   }
-  .btn.secondary{background:#eee;color:#333;font-weight:600}
-  .reset{background:transparent;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;font-size:13px}
 
-  .separator{margin:22px 0;border-top:1px dashed rgba(0,0,0,0.06);padding-top:12px}
-  .section-title{font-size:15px;color:var(--muted);margin:6px 0 12px}
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap; /* Перенос на новую строку */
+    padding: 8px 0; /* Отступы сверху/снизу */
+  }
+
+  .done {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    flex: 1 1 200px; /* Занимает минимум 200px */
+  }
+  .done input {
+    width: 20px;
+    height: 20px;
+  }
+
+  .small {
+    font-size: 13px;
+    color: var(--muted);
+    flex: 0 1 auto; /* Не сжимается */
+    white-space: nowrap; /* Дата без переносов */
+  }
+
+  footer {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .progress {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 0;
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(107, 79, 159, 0.15);
+  }
+  .btn.secondary {
+    background: #eee;
+    color: #333;
+    font-weight: 600;
+  }
+  .reset {
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 13px;
+  }
+
+  .separator {
+    margin: 22px 0;
+    border-top: 1px dashed rgba(0, 0, 0, 0.06);
+    padding-top: 12px;
+  }
+  .section-title {
+    font-size: 15px;
+    color: var(--muted);
+    margin: 6px 0 12px;
+  }
 
   /* Мобильные улучшения */
-  @media (max-width:520px){
-    .front .num{font-size:28px}
-    .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  @media (max-width: 768px) {
+    .front .num {
+      font-size: 28px;
+    }
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    .card {
+      perspective: 600px; /* Меньше перспективы */
+    }
+    .inner {
+      box-shadow: 0 4px 12px rgba(12, 12, 12, 0.06); /* Слабее тень */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .front .num {
+      font-size: 24px;
+    }
+    .task {
+      -webkit-line-clamp: 3; /* 3 строки на мобилках */
+      font-size: 14px;
+    }
+    .controls {
+      flex-direction: column; /* Вертикальное расположение */
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .done, .small {
+      width: 100%;
+      justify-content: flex-start;
+    }
   }
 
   /* print-friendly */
-  @media print{
-    body{background:white}
-    .btn,.reset{display:none}
-    .inner{box-shadow:none}
-    .grid{gap:6px}
+  @media print {
+    body {
+      background: white;
+    }
+    .btn, .reset {
+      display: none;
+    }
+    .inner {
+      box-shadow: none;
+    }
+    .grid {
+      gap: 6px;
+    }
   }
 </style>
 </head>

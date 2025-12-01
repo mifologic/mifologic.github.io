@@ -307,4 +307,20 @@ render();
 printBtn.addEventListener('click',()=>window.print());
 
 revealTodayBtn.addEventListener('click',()=>{
-con
+const d=new Date().getDate();
+const day=Math.min(31,Math.max(1,d));
+state.opened[day-1]=true;
+save();
+const card=document.querySelector(`[data-day="${day}"]`);
+if(card){
+card.classList.add('open');
+card.querySelector('.inner').style.transform='rotateY(180deg)';
+card.scrollIntoView({behavior:'smooth',block:'center'});
+}
+});
+
+render();
+})();
+</script>
+</body>
+</html>

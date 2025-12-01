@@ -5,261 +5,146 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Адвент: забота о себе</title>
 <style>
-  :root {
-    --bg: #f7f4f2;
-    --card: #fff;
-    --accent: #6b4f9f;
-    --muted: #7a7a7a;
-    --ok: #2a9d8f;
-    --shadow: 0 6px 18px rgba(12, 12, 12, 0.08);
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  }
-  html, body {
-    height: 100%;
-    margin: 0;
-    background: linear-gradient(180deg, var(--bg), #eef0f2 100%);
-    color: #222;
-  }
-  .wrap {
-    max-width: 980px;
-    margin: 28px auto;
-    padding: 18px;
-  }
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  h1 {
-    font-size: 20px;
-    margin: 0;
-    color: var(--accent);
-  }
-  p.lead {
-    margin: 6px 0 18px;
-    color: var(--muted);
-    font-size: 14px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-  }
+:root{
+--bg:#f7f4f2;
+--card:#fff;
+--accent:#6b4f9f;
+--muted:#7a7a7a;
+--ok:#2a9d8f;
+--shadow: 0 6px 18px rgba(12,12,12,0.08);
+font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#eef0f2 100%);color:#222}
+.wrap{max-width:980px;margin:28px auto;padding:18px;}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:20px;margin:0;color:var(--accent)}
+p.lead{margin:6px 0 18px;color:var(--muted);font-size:14px}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+gap:16px;
+}
 
-  /* 🌿 АДАПТИВНЫЕ КАРТОЧКИ */
-  .card {
-    perspective: 800px;
-    height: auto;
-  }
-  .inner {
-    position: relative;
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    background: var(--card);
-    box-shadow: var(--shadow);
-    cursor: pointer;
-    transform-style: preserve-3d;
-    transition: transform .6s;
-    max-height: 300px; /* Лимит высоты карточки */
-    overflow-y: auto; /* Скролл при переполнении */
-  }
-  .card.open .inner {
-    transform: rotateY(180deg);
-  }
+/* 🌿 АДАПТИВНЫЕ КАРТОЧКИ */
+.card{
+perspective:800px;
+min-height:180px;
+height:auto;
+}
+.inner{
+    position:relative;
+    width:100%;
+    min-height:180px;
+    height:auto;
+    transition:transform .6s;
+    transform-style:preserve-3d;
+    cursor:pointer;
+}
 
-  .face {
-    position: absolute;
-    inset: 0;
-    backface-visibility: hidden;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px;
-  }
+.card.open .inner{transform:rotateY(180deg)}
 
-  .front {
-    background: linear-gradient(180deg, #fff, var(--card));
-    font-weight: 700;
-    color: var(--accent);
-    font-size: 24px;
-  }
-  .front .num {
-    font-size: 34px;
-    line-height: 1;
-  }
+.face{
+position:absolute;
+inset:0;
+backface-visibility:hidden;
+border-radius:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:14px;
+}
 
-  /* Задняя сторона */
-  .back {
-    transform: rotateY(180deg);
-    text-align: left;
-    padding: 18px; /* Стандартные отступы */
-    font-size: 15px;
-    color: #222;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 12px;
-  }
+.front{
+    position:absolute;
+    width:100%;
+    height:auto;
+    min-height:180px;
+    backface-visibility:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+    font-size:18px; /* или 20 */
+    font-weight:600;
+    text-align:center;
+    word-break:break-word;
+}
 
-  .task {
-    line-height: 1.35;
-    word-wrap: break-word;
-    overflow-y: auto; /* Вертикальный скролл */
-    max-height: 120px; /* Макс. высота текста */
-    padding-right: 8px;
-  }
+.front .num{font-size:34px}
 
-  .controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding: 8px 0;
-    width: 100%;
-    box-sizing: border-box;
-  }
+/* задняя сторона теперь адаптируется по высоте */
+.back{
+    position:absolute;
+    width:100%;
+    height:auto;
+    min-height:180px;
+    backface-visibility:hidden;
+    transform:rotateY(180deg);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:16px;
+    gap:12px;
+}
 
-  .done {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-  }
-  .done input {
-    width: 20px;
-    height: 20px;
-  }
 
-  .small {
-    font-size: 13px;
-    color: var(--muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 80px; /* Фиксированная ширина */
-    margin-left: auto;
-  }
+.task{line-height:1.35}
 
-  footer {
-    margin-top: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+.controls{
+display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  .progress {
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .btn {
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 0;
-    background: var(--accent);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(107, 79, 159, 0.15);
-  }
-  .btn.secondary {
-    background: #eee;
-    color: #333;
-    font-weight: 600;
-  }
-  .reset {
-    background: transparent;
-    border: 0;
-    color: var(--muted);
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 13px;
-  }
+.done{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:12px;
+}
+.done input{
+width:20px;
+height:20px;
+}
 
-  .separator {
-    margin: 22px 0;
-    border-top: 1px dashed rgba(0, 0, 0, 0.06);
-    padding-top: 12px;
-  }
-  .section-title {
-    font-size: 15px;
-    color: var(--muted);
-    margin: 6px 0 12px;
-  }
+.small{
+   font-size: 13px;
+  color: var(--muted);
+  flex: 0 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+footer{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 
-  /* Мобильные улучшения */
-  @media (max-width: 768px) {
-    .front .num {
-      font-size: 28px;
-    }
-    .grid {
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    }
-    .card {
-      perspective: 600px;
-    }
-    .inner {
-      box-shadow: 0 4px 12px rgba(12, 12, 12, 0.06);
-    }
-  }
+.progress{font-size:13px;color:var(--muted)}
+.btn{
+padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;font-weight:600;cursor:pointer;
+box-shadow:0 4px 10px rgba(107,79,159,0.15);
+}
+.btn.secondary{background:#eee;color:#333;font-weight:600}
+.reset{background:transparent;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;font-size:13px}
 
-  @media (max-width: 480px) {
-    /* Уменьшаем отступы в карточке */
-    .back {
-      padding: 12px 10px;
-    }
+.separator{margin:22px 0;border-top:1px dashed rgba(0,0,0,0.06);padding-top:12px}
+.section-title{font-size:15px;color:var(--muted);margin:6px 0 12px}
 
-    /* Ограничиваем высоту текста и уменьшаем шрифт */
-    .task {
-      max-height: 90px;
-      font-size: 14px;
-    }
+/* Мобильные улучшения */
+@media (max-width:520px){
+.front .num{font-size:28px}
+.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+}
 
-    /* Вертикальное расположение элементов управления */
-    .controls {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 6px 0;
-    }
-
-    /* Компактный размер для "Д1", "Д25" */
-    .small {
-      width: 60px;
-      font-size: 12px;
-    }
-
-    /* Уменьшаем шрифт в чекбоксе */
-    .done {
-      font-size: 13px;
-    }
-
-    /* Лимит высоты карточки на телефонах */
-    .inner {
-      max-height: 260px;
-    }
-
-    /* Дополнительно: уменьшаем номер дня */
-    .front .num {
-      font-size: 24px;
-    }
-  }
-
-  /* print-friendly */
-  @media print {
-    body {
-      background: white;
-    }
-    .btn, .reset {
-      display: none;
-    }
-    .inner {box-shadow:none}
+/* print-friendly */
+@media print{
+body{background:white}
+.btn,.reset{display:none}
+.inner{box-shadow:none}
 .grid{gap:6px}
 }
 </style>

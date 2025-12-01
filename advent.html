@@ -80,11 +80,14 @@ gap:12px;
 .task{line-height:1.35}
 
 .controls{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:12px;
-flex-wrap:wrap;
+display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .done{
@@ -98,7 +101,15 @@ width:20px;
 height:20px;
 }
 
-.small{font-size:13px;color:var(--muted)}
+.small{
+   font-size: 13px;
+  color: var(--muted);
+  flex: 0 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
 footer{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 
 .progress{font-size:13px;color:var(--muted)}

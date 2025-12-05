@@ -94,7 +94,7 @@ display: flex;
 display:flex;
 align-items:center;
 gap:8px;
-font-size:14px;
+font-size:12px;
 }
 .done input{
 width:20px;
@@ -274,14 +274,15 @@ card.appendChild(inner);
 
 if(state.opened[globalIndex]){
 card.classList.add('open');
-inner.style.transform = 'rotateY(180deg)';
 }
 
 card.addEventListener('click', (ev)=>{
-if(ev.target.tagName.toLowerCase()==='input') return;
-state.opened[globalIndex] = true;
-card.classList.toggle('open');
-save();
+  if(ev.target.tagName.toLowerCase()==='input') return;
+
+  const isOpen = card.classList.toggle('open');
+  state.opened[globalIndex] = isOpen;
+
+  save();
 });
 
 return card;
